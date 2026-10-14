@@ -1,6 +1,6 @@
 // Offline support: serve the app shell and fonts from cache, refresh in the background.
 // Firebase traffic (login, database) always goes straight to the network.
-const CACHE = "sugarfree-v2";
+const CACHE = "sugarfree-v3";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png"];
 const CACHEABLE = url =>
   url.origin === self.location.origin ||

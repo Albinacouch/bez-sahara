@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Счётчик дней без сахара: этапы, ощущения, режим похудения.">
-<meta name="theme-color" content="#eef3f1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d1715" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#1c1517" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1517" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Без сахара">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -20,32 +20,33 @@
 <style>
 /* Layout: one phone column — counter ring with drifting sparkles, "what's coming" card, stats, tappable milestone path, history. */
 :root {
-  --bg: #eef3f1;
-  --surface: #ffffff;
-  --fg: #13221f;
-  --muted: #5d6f6a;
-  --line: #d6e1dd;
-  --accent: #1d7a68;
-  --accent-soft: #d3ebe4;
-  --pink: #e0719a;
-  --sun: #e9a73b;
-  --warn: #b9472f;
-  --warn-soft: #f6e0da;
+  --bg: #1c1517;
+  --surface: #2a2023;
+  --fg: #f6ece4;
+  --muted: #b3a0a5;
+  --line: #3b2e32;
+  --accent: #f2a7bd;
+  --accent-soft: #422c34;
+  --pink: #d9b26f;
+  --sun: #d9b26f;
+  --warn: #f08a8a;
+  --warn-soft: #3d2326;
+  color-scheme: dark;
   --display: "Unbounded", "Arial Black", system-ui, sans-serif;
   --body: "Manrope", -apple-system, "Segoe UI", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0d1715; --surface: #15221f; --fg: #e6efec; --muted: #8fa39d; --line: #24352f;
-    --accent: #5cc7ad; --accent-soft: #1b3a33; --pink: #f08fb2; --sun: #f2bd5e;
-    --warn: #ec7a60; --warn-soft: #3a211b;
+    --bg: #1c1517; --surface: #2a2023; --fg: #f6ece4; --muted: #b3a0a5; --line: #3b2e32;
+    --accent: #f2a7bd; --accent-soft: #422c34; --pink: #d9b26f; --sun: #d9b26f;
+    --warn: #f08a8a; --warn-soft: #3d2326;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0d1715; --surface: #15221f; --fg: #e6efec; --muted: #8fa39d; --line: #24352f;
-  --accent: #5cc7ad; --accent-soft: #1b3a33; --pink: #f08fb2; --sun: #f2bd5e;
-  --warn: #ec7a60; --warn-soft: #3a211b;
+  --bg: #1c1517; --surface: #2a2023; --fg: #f6ece4; --muted: #b3a0a5; --line: #3b2e32;
+    --accent: #f2a7bd; --accent-soft: #422c34; --pink: #d9b26f; --sun: #d9b26f;
+    --warn: #f08a8a; --warn-soft: #3d2326;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -180,6 +181,7 @@ textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); back
 .privacy { font-size: 13px; color: var(--muted); }
 .privacy summary { cursor: pointer; font-weight: 700; }
 .privacy p { margin: 8px 0 0; }
+.welcome { gap: 12px; }
 .check span { font-size: 14px; line-height: 1.35; }
 .check { flex-direction: row; align-items: center; gap: 10px; font-size: 15px; color: var(--fg); font-weight: 600; }
 .check input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
@@ -226,13 +228,20 @@ textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); back
   </div>
 
   <div id="onboard" class="card" hidden>
-    <h3>Считаем дни без сахара</h3>
+    <h3>Аккаунт готов! С какого дня ты без сахара?</h3>
     <p>Выбери день, с которого ты больше не ешь сахар. Счётчик пойдёт сам, отмечать каждый день не нужно. А впереди этапы: как меняются тяга к сладкому, вкус и энергия.</p>
     <label for="startInput">Первый день без сахара
       <input type="date" id="startInput">
     </label>
     <button class="primary" id="startBtn">Начать</button>
-    <button class="ghost" id="onboardLogin" hidden>У меня уже есть аккаунт</button>
+  </div>
+
+  <div id="welcome" class="card welcome" hidden>
+    <h3>Считаем дни без сахара</h3>
+    <p>Счётчик дней, этапы с тем, что ты почувствуешь, и вес, если хочешь ещё похудеть. Все данные хранятся в твоём аккаунте и не потеряются, даже если сменить телефон.</p>
+    <p class="empty" id="welcomeStatus">Загрузка…</p>
+    <button class="primary" id="welcomeSignup" disabled>Создать аккаунт</button>
+    <button class="ghost" id="welcomeLogin" disabled>У меня уже есть аккаунт</button>
   </div>
 
   <div id="auth" class="card" hidden>
@@ -461,6 +470,7 @@ const FIREBASE_CONFIG = {
 const FIREBASE_VERSION = "10.12.2";
 const LOGIN_DOMAIN = "bez-sahara.app";
 let authOpen = false;
+let fb = null, cloudUser = null, preferRemote = false, authMode = "signup", pushTimer = null;
 const DAY = 86400000;
 const C = 339.29;
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -506,6 +516,11 @@ function countUp(target) {
 
 function render() {
   if (authOpen) return;
+  $("welcome").hidden = true;
+  if (!state && FIREBASE_CONFIG && !cloudUser) {
+    $("welcome").hidden = false; $("onboard").hidden = true; $("main").hidden = true;
+    return;
+  }
   if (!state) { $("onboard").hidden = false; $("main").hidden = true; $("startInput").value = todayISO(); return; }
   $("onboard").hidden = true; $("main").hidden = false;
   const n = currentDays();
@@ -727,12 +742,11 @@ setTimeout(checkCelebrate, 900);
 })();
 
 /* ---------- cloud: anonymous login + sync (Firebase) ---------- */
-let fb = null, cloudUser = null, preferRemote = false, authMode = "signup", pushTimer = null;
 const loginOf = u => (u?.email || "").split("@")[0];
 
 async function initCloud() {
   if (!FIREBASE_CONFIG) return;
-  $("cloud").hidden = false; $("onboardLogin").hidden = false;
+  $("cloud").hidden = false;
   try {
     const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/`;
     const [appM, authM, fsM] = await Promise.all([
@@ -742,9 +756,12 @@ async function initCloud() {
     fb = { authM, fsM, auth: authM.getAuth(app), db: fsM.getFirestore(app) };
     authM.onAuthStateChanged(fb.auth, async user => {
       cloudUser = user; renderCloud();
+      $("welcomeStatus").hidden = true; $("welcomeSignup").disabled = $("welcomeLogin").disabled = false;
+      render();
       if (user) { await pullOrPush(preferRemote); preferRemote = false; }
     });
   } catch {
+    $("welcomeStatus").textContent = "Нет связи. Проверь интернет и открой трекер ещё раз.";
     $("cloudTitle").textContent = "Облако сейчас недоступно";
     $("cloudText").textContent = "Данные сохраняются на телефоне. Попробуй позже, когда будет интернет.";
   }
@@ -781,15 +798,15 @@ function renderCloud() {
     : "Если почистить Safari, счётчик и вес пропадут. Сохрани их в облаке, это бесплатно и без почты.";
   $("account").hidden = !on;
   $("accLogin").textContent = loginOf(cloudUser);
-  $("onboardLogin").hidden = on || !FIREBASE_CONFIG;
 }
 
 function openAuth(mode) {
   authMode = mode;
-  $("authTitle").textContent = mode === "signup" ? "Сохранить в облаке" : "Войти в аккаунт";
+  $("authTitle").textContent = mode === "signup" ? (state ? "Сохранить в облаке" : "Создать аккаунт") : "Войти в аккаунт";
   $("authLead").textContent = mode === "signup"
     ? "Придумай логин и пароль. Почта и имя не нужны. Потом на любом телефоне войди с ними, и все дни и вес вернутся."
     : "Введи логин и пароль, которые ты придумал(а) при создании аккаунта.";
+  $("authCancel").textContent = state ? "Не сейчас" : "Назад";
   $("tabSignup").setAttribute("aria-selected", mode === "signup");
   $("tabLogin").setAttribute("aria-selected", mode === "login");
   $("authAgreeRow").hidden = mode !== "signup";
@@ -799,7 +816,7 @@ function openAuth(mode) {
   authOpen = true; $("auth").hidden = false; $("onboard").hidden = true; $("main").hidden = true;
   scrollTo({ top: 0 });
 }
-function closeAuth() { authOpen = false; $("auth").hidden = true; render(); }
+function closeAuth() { authOpen = false; $("auth").hidden = true; render(); setTimeout(checkCelebrate, 600); }
 
 const AUTH_ERRORS = {
   "auth/email-already-in-use": "Такой логин уже занят, придумай другой",
@@ -827,7 +844,7 @@ $("authForm").addEventListener("submit", async e => {
     if (authMode === "signup") {
       if (state) state.updatedAt = Date.now();
       await fb.authM.createUserWithEmailAndPassword(fb.auth, email, pass);
-      toast("Готово! Данные сохраняются в облаке");
+      toast(state ? "Готово! Данные сохраняются в облаке" : "Аккаунт создан");
     } else {
       preferRemote = true;
       await fb.authM.signInWithEmailAndPassword(fb.auth, email, pass);
@@ -843,7 +860,8 @@ $("tabSignup").onclick = () => openAuth("signup");
 $("tabLogin").onclick = () => openAuth("login");
 $("authCancel").onclick = closeAuth;
 $("cloudBtn").onclick = () => openAuth("signup");
-$("onboardLogin").onclick = () => openAuth("login");
+$("welcomeSignup").onclick = () => openAuth("signup");
+$("welcomeLogin").onclick = () => openAuth("login");
 $("logoutBtn").onclick = async () => {
   await fb.authM.signOut(fb.auth);
   toast("Выход выполнен. Данные на телефоне остались");
