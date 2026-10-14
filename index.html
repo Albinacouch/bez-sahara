@@ -162,6 +162,25 @@ input { font: inherit; color: var(--fg); background: var(--bg); border: 1px soli
 .backup { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
 .backup .row button { padding-inline: 10px; font-size: 14px; }
 textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px; width: 100%; resize: vertical; word-break: break-all; }
+.cloud { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: var(--surface); border: 1.5px dashed var(--line); }
+.cloud.on { border-style: solid; border-color: var(--accent-soft); }
+.cloud .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cloud strong { font-size: 15px; }
+.cloud span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.cloudIcon { width: 28px; height: 28px; flex: none; color: var(--muted); }
+.cloud.on .cloudIcon { color: var(--accent); }
+.cloud:not(.on) #cloudMark { display: none; }
+.cloudBtn { width: auto; flex: none; padding: 10px 14px; font-size: 14px; background: var(--accent); color: var(--bg); }
+.cloud.on .cloudBtn { display: none; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--bg); border-radius: 12px; }
+.tab { padding: 9px; font-size: 14px; border-radius: 9px; background: transparent; color: var(--muted); }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px color-mix(in srgb, var(--fg) 12%, transparent); }
+#authForm { display: flex; flex-direction: column; gap: 12px; }
+.autherr { margin: 0; font-size: 14px; color: var(--warn); font-weight: 600; }
+.privacy { font-size: 13px; color: var(--muted); }
+.privacy summary { cursor: pointer; font-weight: 700; }
+.privacy p { margin: 8px 0 0; }
+.check span { font-size: 14px; line-height: 1.35; }
 .check { flex-direction: row; align-items: center; gap: 10px; font-size: 15px; color: var(--fg); font-weight: 600; }
 .check input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
 
@@ -213,6 +232,32 @@ textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); back
       <input type="date" id="startInput">
     </label>
     <button class="primary" id="startBtn">Начать</button>
+    <button class="ghost" id="onboardLogin" hidden>У меня уже есть аккаунт</button>
+  </div>
+
+  <div id="auth" class="card" hidden>
+    <h3 id="authTitle">Сохранить в облаке</h3>
+    <p class="empty" id="authLead"></p>
+    <div class="tabs" role="tablist">
+      <button class="tab" id="tabSignup" role="tab">Новый аккаунт</button>
+      <button class="tab" id="tabLogin" role="tab">Вход</button>
+    </div>
+    <form id="authForm" novalidate>
+      <label for="authLogin">Логин
+        <input type="text" id="authLogin" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="например, sladkoeka77">
+      </label>
+      <label for="authPass">Пароль
+        <input type="password" id="authPass" autocomplete="new-password" placeholder="не короче 6 символов">
+      </label>
+      <label class="check" for="authAgree" id="authAgreeRow"><input type="checkbox" id="authAgree"> <span>Понимаю: восстановить пароль нельзя, я его запишу</span></label>
+      <p class="autherr" id="authErr" hidden></p>
+      <button class="primary" type="submit" id="authSubmit">Создать аккаунт</button>
+    </form>
+    <details class="privacy">
+      <summary>Какие данные хранятся</summary>
+      <p>Только логин и данные трекера: дата старта, прошлые серии, вес (если ты его вписываешь) и настройки. Мы не спрашиваем ни имени, ни почты, ни телефона. Пароль хранится в зашифрованном виде, его не видит даже автор трекера. Данные лежат в защищённой базе Google Firebase, каждый может прочитать только свои. Удалить аккаунт со всеми данными можно в любой момент.</p>
+    </details>
+    <button class="ghost" id="authCancel" type="button">Не сейчас</button>
   </div>
 
   <div id="main" class="wrap" hidden>
@@ -262,6 +307,15 @@ textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); back
       <button class="switch" id="slimSwitch" role="switch" aria-checked="false" aria-label="Хочу ещё похудеть"><i></i></button>
     </div>
 
+    <div class="cloud" id="cloud" hidden>
+      <svg class="cloudIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path id="cloudMark" d="M9.5 13.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="txt">
+        <strong id="cloudTitle">Данные только на этом телефоне</strong>
+        <span id="cloudText">Если почистить Safari, счётчик и вес пропадут. Сохрани их в облаке, это бесплатно и без почты.</span>
+      </div>
+      <button class="cloudBtn" id="cloudBtn">Сохранить</button>
+    </div>
+
     <section id="weightSec" hidden>
       <h2>Похудение</h2>
       <div class="weight">
@@ -308,13 +362,18 @@ textarea { font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--fg); back
       </label>
       <label class="check" for="slimSet"><input type="checkbox" id="slimSet"> Я ещё хочу похудеть</label>
       <p class="empty">Нужно для подсчёта «не съеденного» сахара. Обычно это 60–100 г в день, если считать сладкие напитки, выпечку и сахар в чае.</p>
-      <div class="backup">
-        <strong>Резервная копия</strong>
-        <p class="empty">Все данные хранятся только на этом телефоне. Скопируй код и сохрани в Заметки — по нему можно восстановить счётчик на новом телефоне.</p>
-        <textarea id="backupText" rows="3" placeholder="Сюда вставь код, чтобы восстановить данные" aria-label="Код резервной копии"></textarea>
+      <div class="backup" id="account" hidden>
+        <strong>Аккаунт: <span id="accLogin"></span></strong>
         <div class="row">
-          <button class="ghost" id="backupCopy">Скопировать код</button>
-          <button class="ghost" id="backupRestore">Восстановить</button>
+          <button class="ghost" id="logoutBtn">Выйти</button>
+          <button class="ghost" id="delBtn">Удалить аккаунт</button>
+        </div>
+        <div id="delConfirm" hidden>
+          <p class="empty">Аккаунт и все данные в облаке удалятся навсегда. На этом телефоне счётчик останется.</p>
+          <div class="row">
+            <button class="ghost" id="delCancel">Отмена</button>
+            <button class="danger" id="delDo">Удалить</button>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -390,6 +449,18 @@ const QUOTES = [
   "Ягоды, орехи, корица — у тебя <span>есть</span> вкусная замена."
 ];
 const LS_KEY = "sugarfree.v1";
+// Firebase project keys (public by design; access is limited by Firestore rules).
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA4ZHkWenvD2FThPNYVWkuNuWmKEIBsBak",
+  authDomain: "bez-sahara-ad0f5.firebaseapp.com",
+  projectId: "bez-sahara-ad0f5",
+  storageBucket: "bez-sahara-ad0f5.firebasestorage.app",
+  messagingSenderId: "670721160493",
+  appId: "1:670721160493:web:370114558d5321019acfa4"
+};
+const FIREBASE_VERSION = "10.12.2";
+const LOGIN_DOMAIN = "bez-sahara.app";
+let authOpen = false;
 const DAY = 86400000;
 const C = 339.29;
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -415,7 +486,7 @@ const css = name => getComputedStyle(document.documentElement).getPropertyValue(
 const currentDays = () => state ? Math.max(0, daysBetween(state.start, todayISO())) : 0;
 
 function normalize(s) {
-  return { start: s.start, grams: s.grams ?? 70, attempts: s.attempts || [], celebrated: s.celebrated || [], slim: !!s.slim, weights: s.weights || [] };
+  return { start: s.start, grams: s.grams ?? 70, attempts: s.attempts || [], celebrated: s.celebrated || [], slim: !!s.slim, weights: s.weights || [], updatedAt: s.updatedAt || 0 };
 }
 
 /* ---------- render ---------- */
@@ -425,6 +496,7 @@ function countUp(target) {
   if (reduceMotion || shownDays === target) { el.textContent = target; shownDays = target; return; }
   const from = shownDays ?? 0, t0 = performance.now(), dur = Math.min(1400, 400 + target * 20);
   shownDays = target;
+  setTimeout(() => { if (shownDays === target) el.textContent = target; }, dur + 150);
   (function step(t) {
     const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
     el.textContent = Math.round(from + (target - from) * e);
@@ -433,6 +505,7 @@ function countUp(target) {
 }
 
 function render() {
+  if (authOpen) return;
   if (!state) { $("onboard").hidden = false; $("main").hidden = true; $("startInput").value = todayISO(); return; }
   $("onboard").hidden = true; $("main").hidden = false;
   const n = currentDays();
@@ -630,7 +703,10 @@ function toast(msg) {
   clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2200);
 }
 function save() {
+  if (!state) return;
+  state.updatedAt = Date.now();
   try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {}
+  clearTimeout(pushTimer); pushTimer = setTimeout(push, 800);
 }
 
 try { const raw = localStorage.getItem(LS_KEY); if (raw) state = normalize(JSON.parse(raw)); } catch {}
@@ -650,23 +726,142 @@ setTimeout(checkCelebrate, 900);
   };
 })();
 
-/* ---------- backup ---------- */
-$("backupCopy").onclick = async () => {
-  const code = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
-  $("backupText").value = code;
-  try { await navigator.clipboard.writeText(code); toast("Код скопирован. Сохрани его в Заметки"); }
-  catch { $("backupText").select(); toast("Выдели код и скопируй вручную"); }
-};
-$("backupRestore").onclick = () => {
+/* ---------- cloud: anonymous login + sync (Firebase) ---------- */
+let fb = null, cloudUser = null, preferRemote = false, authMode = "signup", pushTimer = null;
+const loginOf = u => (u?.email || "").split("@")[0];
+
+async function initCloud() {
+  if (!FIREBASE_CONFIG) return;
+  $("cloud").hidden = false; $("onboardLogin").hidden = false;
   try {
-    const s = normalize(JSON.parse(decodeURIComponent(escape(atob($("backupText").value.trim())))));
-    if (!s.start) throw 0;
-    state = s; openIdx = null;
-    $("backupText").value = "";
-    $("settings").hidden = true; $("actions").hidden = false;
-    save(); render(); toast("Данные восстановлены");
-  } catch { toast("Код не подошёл. Проверь, что он скопирован целиком"); }
+    const base = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/`;
+    const [appM, authM, fsM] = await Promise.all([
+      import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")
+    ]);
+    const app = appM.initializeApp(FIREBASE_CONFIG);
+    fb = { authM, fsM, auth: authM.getAuth(app), db: fsM.getFirestore(app) };
+    authM.onAuthStateChanged(fb.auth, async user => {
+      cloudUser = user; renderCloud();
+      if (user) { await pullOrPush(preferRemote); preferRemote = false; }
+    });
+  } catch {
+    $("cloudTitle").textContent = "Облако сейчас недоступно";
+    $("cloudText").textContent = "Данные сохраняются на телефоне. Попробуй позже, когда будет интернет.";
+  }
+}
+
+function userRef() { return fb.fsM.doc(fb.db, "users", cloudUser.uid); }
+
+async function pullOrPush(remoteWins) {
+  try {
+    const snap = await fb.fsM.getDoc(userRef());
+    const remote = snap.exists() ? snap.data().data : null;
+    if (remote && remote.start && (remoteWins || !state || (remote.updatedAt || 0) > (state.updatedAt || 0))) {
+      state = normalize(remote); openIdx = null;
+      try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {}
+      render(); setTimeout(checkCelebrate, 600);
+      if (remoteWins) toast("Данные восстановлены");
+    } else if (state) {
+      await push();
+    }
+  } catch { toast("Не удалось связаться с облаком"); }
+}
+
+async function push() {
+  if (!fb || !cloudUser || !state) return;
+  try { await fb.fsM.setDoc(userRef(), { data: state, updatedAt: state.updatedAt || Date.now() }); } catch {}
+}
+
+function renderCloud() {
+  const on = !!cloudUser;
+  $("cloud").classList.toggle("on", on);
+  $("cloudTitle").textContent = on ? "Сохраняется в облаке" : "Данные только на этом телефоне";
+  $("cloudText").textContent = on
+    ? `Логин: ${loginOf(cloudUser)}. Если почистить Safari или сменить телефон, просто войди снова.`
+    : "Если почистить Safari, счётчик и вес пропадут. Сохрани их в облаке, это бесплатно и без почты.";
+  $("account").hidden = !on;
+  $("accLogin").textContent = loginOf(cloudUser);
+  $("onboardLogin").hidden = on || !FIREBASE_CONFIG;
+}
+
+function openAuth(mode) {
+  authMode = mode;
+  $("authTitle").textContent = mode === "signup" ? "Сохранить в облаке" : "Войти в аккаунт";
+  $("authLead").textContent = mode === "signup"
+    ? "Придумай логин и пароль. Почта и имя не нужны. Потом на любом телефоне войди с ними, и все дни и вес вернутся."
+    : "Введи логин и пароль, которые ты придумал(а) при создании аккаунта.";
+  $("tabSignup").setAttribute("aria-selected", mode === "signup");
+  $("tabLogin").setAttribute("aria-selected", mode === "login");
+  $("authAgreeRow").hidden = mode !== "signup";
+  $("authPass").autocomplete = mode === "signup" ? "new-password" : "current-password";
+  $("authSubmit").textContent = mode === "signup" ? "Создать аккаунт" : "Войти";
+  $("authErr").hidden = true;
+  authOpen = true; $("auth").hidden = false; $("onboard").hidden = true; $("main").hidden = true;
+  scrollTo({ top: 0 });
+}
+function closeAuth() { authOpen = false; $("auth").hidden = true; render(); }
+
+const AUTH_ERRORS = {
+  "auth/email-already-in-use": "Такой логин уже занят, придумай другой",
+  "auth/invalid-credential": "Неверный логин или пароль",
+  "auth/invalid-login-credentials": "Неверный логин или пароль",
+  "auth/wrong-password": "Неверный логин или пароль",
+  "auth/user-not-found": "Неверный логин или пароль",
+  "auth/weak-password": "Пароль слишком короткий, нужно от 6 символов",
+  "auth/network-request-failed": "Нет интернета. Попробуй ещё раз",
+  "auth/too-many-requests": "Слишком много попыток. Подожди пару минут"
 };
+function authError(msg) { $("authErr").textContent = msg; $("authErr").hidden = false; }
+
+$("authForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!fb) { authError("Облако ещё загружается или нет интернета. Попробуй через минуту"); return; }
+  const login = $("authLogin").value.trim().toLowerCase();
+  const pass = $("authPass").value;
+  if (!/^[a-z0-9._-]{3,30}$/.test(login)) { authError("Логин: от 3 до 30 символов, латинские буквы, цифры, точка, дефис или _"); return; }
+  if (pass.length < 6) { authError("Пароль должен быть не короче 6 символов"); return; }
+  if (authMode === "signup" && !$("authAgree").checked) { authError("Отметь галочку: пароль восстановить нельзя, его нужно запомнить"); return; }
+  const email = `${login}@${LOGIN_DOMAIN}`;
+  $("authSubmit").disabled = true;
+  try {
+    if (authMode === "signup") {
+      if (state) state.updatedAt = Date.now();
+      await fb.authM.createUserWithEmailAndPassword(fb.auth, email, pass);
+      toast("Готово! Данные сохраняются в облаке");
+    } else {
+      preferRemote = true;
+      await fb.authM.signInWithEmailAndPassword(fb.auth, email, pass);
+    }
+    $("authPass").value = ""; $("authAgree").checked = false;
+    closeAuth();
+  } catch (err) {
+    preferRemote = false;
+    authError(AUTH_ERRORS[err.code] || "Не получилось. Попробуй ещё раз");
+  } finally { $("authSubmit").disabled = false; }
+});
+$("tabSignup").onclick = () => openAuth("signup");
+$("tabLogin").onclick = () => openAuth("login");
+$("authCancel").onclick = closeAuth;
+$("cloudBtn").onclick = () => openAuth("signup");
+$("onboardLogin").onclick = () => openAuth("login");
+$("logoutBtn").onclick = async () => {
+  await fb.authM.signOut(fb.auth);
+  toast("Выход выполнен. Данные на телефоне остались");
+};
+$("delBtn").onclick = () => { $("delConfirm").hidden = false; };
+$("delCancel").onclick = () => { $("delConfirm").hidden = true; };
+$("delDo").onclick = async () => {
+  try {
+    await fb.fsM.deleteDoc(userRef());
+    await fb.authM.deleteUser(cloudUser);
+    $("delConfirm").hidden = true;
+    toast("Аккаунт удалён");
+  } catch (err) {
+    toast(err.code === "auth/requires-recent-login" ? "Выйди и войди снова, потом удали аккаунт" : "Не получилось удалить. Попробуй ещё раз");
+  }
+};
+
+initCloud();
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
